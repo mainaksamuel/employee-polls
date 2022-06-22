@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { _saveQuestion, _saveQuestionAnswer } from "../../_DATA";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { _saveQuestion, _saveQuestionAnswer, _getQuestions } from "../../_DATA";
 
 export const pollsSlice = createSlice({
   name: "polls",
@@ -26,6 +26,16 @@ export const pollsSlice = createSlice({
         );
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(getQuestions.fulfilled, (state, action) => {
+      state = action.payload;
+    });
+  },
+});
+
+export const getQuestions = createAsyncThunk("polls/get", async () => {
+  const questions = await _getQuestions();
+  return questions;
 });
 
 export const createPoll = (question) => async (dispatch) => {

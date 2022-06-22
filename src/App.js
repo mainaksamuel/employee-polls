@@ -1,27 +1,25 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { Route, Routes } from "react-router-dom";
 
 import "./App.css";
 import Login from "./features/authentication/Login";
 import Logout from "./features/authentication/Logout";
 import CreatePoll from "./features/polls/CreatePoll";
 import AnswerPoll from "./features/polls/AnswerPoll";
-import { selectAuth } from "./features/authentication/authenticationSlice";
+import Dashboard from "./components/Dashboard";
+import Leaderboard from "./components/Leaderboard";
 
 function App() {
-  const { isAuthed, authedUser } = useSelector(selectAuth);
-
   return (
     <div className="App">
-      <Login />
-      <Logout />
-      {isAuthed ? (
-        <p>Authed User: {authedUser}</p>
-      ) : (
-        <p>Don't know who you are!!</p>
-      )}
-      <CreatePoll />
-      <AnswerPoll />
+      <Routes>
+        <Route exact path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/poll" element={<CreatePoll />} />
+        <Route path="/poll/:id" element={<AnswerPoll />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+      </Routes>
     </div>
   );
 }
