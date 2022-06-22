@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { _saveQuestion } from "../../_DATA";
+import { _saveQuestion, _saveQuestionAnswer } from "../../_DATA";
 
 export const pollsSlice = createSlice({
   name: "polls",
@@ -8,7 +8,23 @@ export const pollsSlice = createSlice({
     create: (state, action) => {
       state[action.payload.id] = action.payload;
     },
-    answer: (state, action) => {},
+    addVote: (state, action) => {
+      const previousVotes =
+        state[action.payload.qid][action.payload.answer].votes;
+      state[action.payload.qid][action.payload.answer].votes = [
+        ...previousVotes,
+        action.payload.authedUser,
+      ];
+      // previousVotes.concat([action.payload.authedUser]);
+    },
+    removeVote: (state, action) => {
+      const previousVotes =
+        state[action.payload.qid][action.payload.answer].votes;
+      state[action.payload.qid][action.payload.answer].votes =
+        previousVotes.filter(
+          (authedId) => authedId === action.payload.authedUser
+        );
+    },
   },
 });
 
@@ -17,7 +33,15 @@ export const createPoll = (question) => async (dispatch) => {
   dispatch(create(formatedQuestion));
 };
 
-export const { create, answer } = pollsSlice.actions;
+export const answerPoll = (answeredPoll) => async (dispatch) => {
+  dispatch(addVote({ ...answeredPoll }));
+  const isAnswered = await _saveQuestionAnswer({ ...answeredPoll });
+  if (!isAnswered) {
+    dispatch(removeVote({ ...answeredPoll }));
+  }
+};
+
+export const { create, addVote, removeVote } = pollsSlice.actions;
 
 export const selectPolls = (state) => state.polls;
 
