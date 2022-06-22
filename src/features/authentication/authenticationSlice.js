@@ -39,11 +39,11 @@ export const authenticationSlice = createSlice({
       }
     },
     logout: (state) => {
-      if (state.isAuthed) {
-        state.authedUser = null;
-        state.isAuthed = false;
+      if (!state.isAuthed) {
+        alert("You are currently not logged in. Please login first");
       }
-      alert("You are currently not logged in. Please login first");
+      state.authedUser = null;
+      state.isAuthed = false;
     },
   },
 });
