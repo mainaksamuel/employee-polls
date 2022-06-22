@@ -8,8 +8,15 @@ const initialState = {
 
 export const authenticateUser =
   ({ username, password }) =>
-  async (dispatch) => {
-    const isAuthed = await _getUsers()
+  async (dispatch, getState) => {
+    const { isAuthed, authedUser } = selectAuth(getState());
+
+    if (isAuthed) {
+      alert(`User: ${authedUser} is already logged in.`);
+      return;
+    }
+
+    const isValidCredentials = await _getUsers()
       .then((users) => {
         return Object.values(users).find((user) => user.id === username);
       })
@@ -18,7 +25,7 @@ export const authenticateUser =
       })
       .catch(() => alert("Invalid username/password."));
 
-    dispatch(login({ username, isAuthed }));
+    dispatch(login({ username, isValidCredentials }));
   };
 
 export const authenticationSlice = createSlice({
@@ -26,14 +33,17 @@ export const authenticationSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      if (action.payload.isAuthed) {
+      if (action.payload.isValidCredentials) {
         state.isAuthed = true;
         state.authedUser = action.payload.username;
       }
     },
     logout: (state) => {
-      state.authedUser = null;
-      state.isAuthed = false;
+      if (state.isAuthed) {
+        state.authedUser = null;
+        state.isAuthed = false;
+      }
+      alert("You are currently not logged in. Please login first");
     },
   },
 });
