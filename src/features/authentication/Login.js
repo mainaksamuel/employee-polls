@@ -1,12 +1,25 @@
 import { useRef } from "react";
-import { useDispatch } from "react-redux";
-import { authenticateUser } from "./authenticationSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { authenticateUser, selectAuth } from "./authenticationSlice";
 
 const Login = () => {
   const usernameRef = useRef("");
   const passwordRef = useRef("");
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { isAuthed } = useSelector(selectAuth);
+
+  if (isAuthed) {
+    if (location.state?.from) {
+      navigate(location.state.from);
+      return;
+    }
+    navigate("/");
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,6 +33,7 @@ const Login = () => {
     usernameRef.current.value = "";
     passwordRef.current.value = "";
   };
+
   return (
     <div>
       <h1>Login </h1>

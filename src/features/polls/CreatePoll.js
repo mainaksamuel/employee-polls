@@ -2,12 +2,14 @@ import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPoll } from "./pollsSlice";
 import { selectAuth } from "../authentication/authenticationSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 const CreatePoll = () => {
   const optionOneRef = useRef("");
   const optionTwoRef = useRef("");
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { isAuthed, authedUser } = useSelector(selectAuth);
 
@@ -36,10 +38,12 @@ const CreatePoll = () => {
     }
 
     dispatch(createPoll(question));
+    navigate("/");
   };
 
   return (
     <div>
+      <Link to={"/"}>Home</Link>
       <h1>Would you Rather</h1>
       <span>Create Your Own Poll</span>
       <div>
