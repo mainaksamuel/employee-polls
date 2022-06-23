@@ -13,9 +13,15 @@ export const getUsers = createAsyncThunk("users/get", async () => {
   return { users, leaderboard };
 });
 
+const initialState = {
+  users: {},
+  leaderboard: {},
+  status: "idle",
+};
+
 const usersSlice = createSlice({
   name: "users",
-  initialState: {},
+  initialState,
   extraReducers: (builder) => {
     builder.addCase(getUsers.fulfilled, (state, action) => {
       state.users = action.payload.users;

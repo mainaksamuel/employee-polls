@@ -1,9 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { _saveQuestion, _saveQuestionAnswer, _getQuestions } from "../../_DATA";
 
+const initialState = {
+  questions: {},
+  status: "idle",
+};
 export const pollsSlice = createSlice({
   name: "polls",
-  initialState: {},
+  initialState,
   reducers: {
     create: (state, action) => {
       state.questions[action.payload.id] = action.payload;
