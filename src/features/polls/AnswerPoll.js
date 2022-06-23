@@ -1,14 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { selectPolls, answerPoll } from "./pollsSlice";
 import { selectAuth } from "../authentication/authenticationSlice";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AnswerPoll = () => {
-  const questions = useSelector(selectPolls);
-  const question = questions[Object.keys(questions)[0]];
-
   const { isAuthed, authedUser } = useSelector(selectAuth);
+  const { id } = useParams();
+
+  const questions = useSelector(selectPolls);
+  const question = questions[id];
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleVote = (e) => {
     if (!isAuthed) {
@@ -24,6 +27,7 @@ const AnswerPoll = () => {
     };
 
     dispatch(answerPoll(answeredPoll));
+    navigate("/");
   };
 
   return (

@@ -6,36 +6,38 @@ export const pollsSlice = createSlice({
   initialState: {},
   reducers: {
     create: (state, action) => {
-      state[action.payload.id] = action.payload;
+      state.questions[action.payload.id] = action.payload;
     },
     addVote: (state, action) => {
-      const previousVotes =
-        state[action.payload.qid][action.payload.answer].votes;
-      state[action.payload.qid][action.payload.answer].votes = [
+      const previousVotes = state.questions[action.payload.qid][
+        action.payload.answer
+      ].votes.filter((id) => id !== action.payload.authedUser);
+
+      state.questions[action.payload.qid][action.payload.answer].votes = [
         ...previousVotes,
         action.payload.authedUser,
       ];
-      // previousVotes.concat([action.payload.authedUser]);
     },
     removeVote: (state, action) => {
       const previousVotes =
-        state[action.payload.qid][action.payload.answer].votes;
-      state[action.payload.qid][action.payload.answer].votes =
+        state.questions[action.payload.qid][action.payload.answer].votes;
+
+      state.questions[action.payload.qid][action.payload.answer].votes =
         previousVotes.filter(
-          (authedId) => authedId === action.payload.authedUser
+          (authedId) => authedId !== action.payload.authedUser
         );
     },
   },
   extraReducers: (builder) => {
     builder.addCase(getQuestions.fulfilled, (state, action) => {
-      state = action.payload;
+      state.questions = action.payload.questions;
     });
   },
 });
 
 export const getQuestions = createAsyncThunk("polls/get", async () => {
   const questions = await _getQuestions();
-  return questions;
+  return { questions };
 });
 
 export const createPoll = (question) => async (dispatch) => {
@@ -53,6 +55,6 @@ export const answerPoll = (answeredPoll) => async (dispatch) => {
 
 export const { create, addVote, removeVote } = pollsSlice.actions;
 
-export const selectPolls = (state) => state.polls;
+export const selectPolls = (state) => state.polls.questions;
 
 export default pollsSlice.reducer;
